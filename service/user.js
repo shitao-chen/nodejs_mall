@@ -1,4 +1,5 @@
 let User = require("../model/user");
+let encryptUtils = require("../utils/encryptUtils");
 
 /**
  * 用户注册
@@ -9,12 +10,22 @@ let User = require("../model/user");
 async  function regist(user) {
     //判断用户名是否存在
     let result = await findByUsername(user.username);
+
     if (result){
-        throw Error(`用户名${username}已经存在`)
+        throw Error(`用户名${result.username}已经存在`)
     }
+
+    //对密码进行加密
+    //参数1：原文
+    //参数2：盐
+    user.password = encryptUtils.md5Hmac(user.password,user.username);
+    //对角色重新赋值，避免攻击
+    user.role = 0;
 
     //注册
      result = await  User.create(user);
+     //将密码清楚，避免密码泄露
+     result.password = "";
     return result;
 }
 
@@ -25,11 +36,27 @@ async  function regist(user) {
  * @returns {Promise<void>}
  */
 async function login(user) {
+    // 用户有没有传递账号密码过来
+    let username = user.username;
+    let password = user.password;
+    if (username == null || username.trim().length == 0) {
+        throw Error("用户名不能为空");
+    }
+    if (password == null || password.trim().length == 0) {
+        throw Error("密码不能为空");
+    }
+
     //判断用户是否存在
     await isExistByUsername(user.username);
 
-    let result = await User.findone(user);
+    //对传过来的密码进行加密处理
+    user.password = encryptUtils.md5Hmac(user.password,user.username);
 
+    let result = await User.findOne(user);
+    if(result == null){
+        throw  Error("账号或密码错误");
+    }
+    result.password = "";
     return result;
 
 }
@@ -46,11 +73,11 @@ async function login(user) {
  */
 async function deleteUserByUsername(username) {
     //判断用户是否存在
-    await isExistByUsername(user.username);
+    await isExistByUsername(username);
 
      let result = await User.deleteOne({username:username});
 
-     if (result !== 1){
+     if (result.n !== 1){
          throw Error(`删除失败`)
      }
 }
@@ -69,7 +96,7 @@ async function findByUsername(username) {
 
 //根据用户名判断用户是否存在
 async function isExistByUsername(username) {
-    let result = await  findByUsername();
+    let result = await  findByUsername(username);
     if (!result){
         throw Error(`用户名为${username}的用户不存在`)
     }
