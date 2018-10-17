@@ -1,7 +1,8 @@
 
-let mongoose = require("mongoose")
+let mongoose = require("mongoose");
+let config = require("./config/");
 
-mongoose.connect("mongodb://localhost/product-manager",{useNewUrlParser:true});
+mongoose.connect("mongodb://localhost/"+config.DB,{useNewUrlParser:true});
 
 let connection = mongoose.connection;
 

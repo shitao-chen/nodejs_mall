@@ -3,6 +3,7 @@
 require('express-async-errors');
 require("./db");
 let express = require("express");
+let config = require("./config");
 // 处理日志
 let morgan = require("morgan");
 let app = express();
@@ -17,4 +18,4 @@ app.use((err, request, response, next) => {
     // 写出失败的响应
     response.fail(err)
 });
-app.listen(8000);
+app.listen(config.PORT);
