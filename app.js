@@ -18,6 +18,7 @@ app.use(express.json());
 
 //加载自定义的路由模块
 app.use("/user",require("./router/user"));
+app.use("/category",require("./router/category"));
 
 
 // 处理全局异常的中间件
