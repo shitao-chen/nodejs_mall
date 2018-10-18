@@ -10,6 +10,7 @@ let app = express();
 
 // 使用自定义的加强response的中间件
 app.use(require("./middleware/response_md"));
+app.use(require("./middleware/token_md"));
 
 // 使用日志功能
 app.use(morgan('combined'));
