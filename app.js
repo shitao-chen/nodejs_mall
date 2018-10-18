@@ -10,7 +10,10 @@ let app = express();
 
 // 使用自定义的加强response的中间件
 app.use(require("./middleware/response_md"));
+// 校验用户的登录状态
 app.use(require("./middleware/token_md"));
+// 校验权限
+app.use(require("./middleware/permission_md"));
 
 // 使用日志功能
 app.use(morgan('combined'));
@@ -18,10 +21,10 @@ app.use(morgan('combined'));
 app.use(express.json());
 
 //加载自定义的路由模块
-app.use("/user",require("./router/user"));
-app.use("/category",require("./router/category"));
-app.use("/product",require("./router/product"));
-app.use("/order",require("./router/order"));
+app.use("/user", require("./router/user"));
+app.use("/category", require("./router/category"));
+app.use("/product", require("./router/product"));
+app.use("/order", require("./router/order"));
 
 
 // 处理全局异常的中间件

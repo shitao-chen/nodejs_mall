@@ -64,4 +64,4 @@ module.exports = async (request, response, next) => {
 
     // 放行的代码
     next();
-}
+};
