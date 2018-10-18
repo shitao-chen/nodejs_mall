@@ -70,10 +70,15 @@ async function findByPage(page=1) {
 //根据ID查询数据是否存在
 async function isExistByID(id) {
 
-    let result = await Product.findOne({_id:id});
+    let result = findById(id);
     if (!result){
         throw  Error(`ID为${id}的商品不存在`)
     }
+}
+
+//根据ID查询数据
+async  function findById(id){
+    return  await Product.findOne({_id:id});
 }
 
 
@@ -82,6 +87,7 @@ module.exports ={
     addItem,
     deleteById,
     updateById,
-    findByPage
+    findByPage,
+    findById
 
 };
