@@ -1,6 +1,6 @@
 apps:
 - script   : app.js
-  name: xxx
+  name: mall
   instances: max
   exec_mode: cluster
   watch  : true
