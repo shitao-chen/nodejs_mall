@@ -1,5 +1,6 @@
 let User = require("../model/user");
 let encryptUtils = require("../utils/encryptUtils");
+let config = require("../config");
 
 /**
  * 用户注册
@@ -51,13 +52,22 @@ async function login(user) {
 
     //对传过来的密码进行加密处理
     user.password = encryptUtils.md5Hmac(user.password, user.username);
-
+    //查询用户
     let result = await User.findOne(user);
-    if (result == null) {
+    if (!result) {
         throw  Error("账号或密码错误");
     }
-    result.password = "";
-    return result;
+    //查询成功，定义token
+    let token = {
+        username: result.username,
+        expire: Date.now() + config.TOKEN_EXPIRE
+    };
+
+    //对token进行加密（对称加密）
+    //参数1：原文（string）
+    //参数2：密钥
+    let encryptedToken = encryptUtils.aesEncrypt(JSON.stringify(token), config.TOKEN_KEY);
+    return encryptedToken;
 
 }
 
@@ -86,7 +96,7 @@ async function deleteUserByUsername(username) {
  * @returns {Promise<*>}
  */
 async function findByUsername(username) {
-    let result = await User.findOne({username: username});
+    let result = await User.findOne({username: username}).select("-password");
     return result;
 }
 
